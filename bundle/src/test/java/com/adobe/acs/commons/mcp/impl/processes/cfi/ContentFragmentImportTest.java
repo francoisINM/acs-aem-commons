@@ -69,7 +69,7 @@ public class ContentFragmentImportTest {
         rr = getEnhancedMockResolver();
         mockFragment = new MockContentFragment();
         importer = prepareProcessDefinition(new ContentFragmentImport());
-        importer.spreadsheet = new Spreadsheet(false, PATH, FOLDER_TITLE, NAME, TITLE, TEMPLATE);
+        importer.spreadsheet = new Spreadsheet(false,false, PATH, FOLDER_TITLE, NAME, TITLE, TEMPLATE);
         instance = prepareProcessInstance(new ProcessInstanceImpl(getControlledProcessManager(), importer, "Test content fragment import"));
     }
 

@@ -20,6 +20,8 @@
 package com.adobe.acs.commons.data;
 
 import aQute.bnd.annotation.ProviderType;
+
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +43,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 public final class Variant {
 
     private static final FastDateFormat STANDARD_DATE_FORMAT = FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT);
+    private static final SimpleDateFormat ISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private Optional<Long> longVal = Optional.empty();
     private Optional<Double> doubleVal = Optional.empty();
     private Optional<String> stringVal = Optional.empty();
@@ -225,6 +228,13 @@ public final class Variant {
     public Date toDate() {
         return dateVal.orElse(longVal.map(Date::new)
                 .orElse(stringVal.map(s -> {
+                    try {
+                        // last chance
+                        Date test = ISO.parse(s);
+                        return test;
+                    } catch (ParseException ex) {
+
+                    }
                     for (FastDateFormat format : DATE_FORMATS) {
                         try {
                             return format.parse(s);

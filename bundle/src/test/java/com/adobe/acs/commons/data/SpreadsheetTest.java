@@ -75,7 +75,7 @@ public class SpreadsheetTest {
         workbookData.close();
 
         InputStream dataTypesFile = SpreadsheetTest.class.getResourceAsStream("/com/adobe/acs/commons/data/spreadsheet-data-types.xlsx");
-        dataTypesSheet = new Spreadsheet(false, dataTypesFile);
+        dataTypesSheet = new Spreadsheet(false, false, dataTypesFile);
     }
 
     /**
@@ -105,7 +105,7 @@ public class SpreadsheetTest {
      */
     @Test
     public void testGetHeaderRow() throws IOException {
-        Spreadsheet instance = new Spreadsheet(false, new ByteArrayInputStream(workbookData.toByteArray()));
+        Spreadsheet instance = new Spreadsheet(false, false,  new ByteArrayInputStream(workbookData.toByteArray()));
         List<String> expResult = Arrays.asList(header);
         List<String> result = instance.getHeaderRow();
         assertTrue("Header row should match", result.containsAll(expResult));
@@ -127,7 +127,7 @@ public class SpreadsheetTest {
      */
     @Test
     public void testRequiredColumnsNoConversion() throws IOException {
-        Spreadsheet instance = new Spreadsheet(false, new ByteArrayInputStream(workbookData.toByteArray()), "someOtherCol");
+        Spreadsheet instance = new Spreadsheet(false, false, new ByteArrayInputStream(workbookData.toByteArray()), "someOtherCol");
         List<String> required = instance.getRequiredColumns();
         assertEquals("someOtherCol", required.get(0));
         List<Map<String, CompositeVariant>> result = instance.getDataRowsAsCompositeVariants();
@@ -139,7 +139,7 @@ public class SpreadsheetTest {
      */
     @Test
     public void testRequiredColumnsWithConversion() throws IOException {
-        Spreadsheet instance = new Spreadsheet(true, new ByteArrayInputStream(workbookData.toByteArray()), "someOtherCol");
+        Spreadsheet instance = new Spreadsheet(true, true, new ByteArrayInputStream(workbookData.toByteArray()), "someOtherCol");
         List<String> required = instance.getRequiredColumns();
         assertEquals("someothercol", required.get(0));
         List<Map<String, CompositeVariant>> result = instance.getDataRowsAsCompositeVariants();
@@ -148,7 +148,7 @@ public class SpreadsheetTest {
 
     @Test
     public void testVariantTypes() throws IOException {
-        Spreadsheet instance = new Spreadsheet(true, new ByteArrayInputStream(workbookData.toByteArray()));
+        Spreadsheet instance = new Spreadsheet(true, true, new ByteArrayInputStream(workbookData.toByteArray()));
         Map<String, CompositeVariant> values = instance.getDataRowsAsCompositeVariants().get(4);
         assertEquals((Integer) 12345, values.get("int-val").toPropertyValue());
         assertArrayEquals(new String[]{"one", "two", "three"}, (Object[]) values.get("string-list1").toPropertyValue());

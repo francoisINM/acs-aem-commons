@@ -30,14 +30,7 @@ import com.adobe.acs.commons.data.CompositeVariant;
 import com.day.cq.commons.jcr.JcrUtil;
 import com.day.cq.dam.api.Asset;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
@@ -77,7 +70,8 @@ public class UrlAssetImport extends AssetIngestor {
     private static final Logger LOG = LoggerFactory.getLogger(UrlAssetImport.class);
     private HttpClientBuilderFactory httpFactory;
     private HttpClient httpClient = null;
-
+    private boolean enableHeaderNameConversion = true;
+    private boolean toLowerHeaderNames = false;
     public UrlAssetImport(MimeTypeService mimeTypeService, HttpClientBuilderFactory httpFactory) {
         super(mimeTypeService);
         this.httpFactory = httpFactory;
@@ -136,7 +130,7 @@ public class UrlAssetImport extends AssetIngestor {
     @Override
     public void buildProcess(ProcessInstance instance, ResourceResolver rr) throws LoginException, RepositoryException {
         try {
-            fileData = new Spreadsheet(importFile);
+            fileData = new Spreadsheet(enableHeaderNameConversion, toLowerHeaderNames, importFile);
             files = extractFilesAndFolders(fileData.getDataRowsAsCompositeVariants());
             instance.getInfo().setDescription(String.format("Import %s (%s rows)",  fileData.getFileName(), fileData.getRowCount()));
         } catch (IOException ex) {
@@ -309,7 +303,13 @@ public class UrlAssetImport extends AssetIngestor {
                 CompositeVariant value = file.getProperty(prop);
                 meta.remove(prop);
                 if (value != null && !value.isEmpty()) {
-                    meta.put(prop, value.toPropertyValue());
+                    if(value.getSingularType().getName().equals("java.util.Date")) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime((Date)value.toPropertyValue());
+                        meta.put(prop, cal);
+                    } else {
+                        meta.put(prop, value.toPropertyValue());
+                    }
                 }
             }
         }

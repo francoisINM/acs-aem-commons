@@ -60,15 +60,16 @@ public class Spreadsheet {
     private List<String> headerRow;
     private final Map<String, String> delimiters;
     private boolean enableHeaderNameConversion = true;
-
+    private boolean toLowerHeaderNames = true;
     /**
      * Simple constructor used for unit testing purposes
      *
      * @param convertHeaderNames If true, header names are converted
      * @param headerArray List of strings for header columns
      */
-    public Spreadsheet(boolean convertHeaderNames, String... headerArray) {
+    public Spreadsheet(boolean convertHeaderNames, boolean toLowerHeaderNames, String... headerArray) {
         this.enableHeaderNameConversion = convertHeaderNames;
+        this.toLowerHeaderNames = toLowerHeaderNames;
         headerTypes = Arrays.stream(headerArray).collect(Collectors.toMap(this::convertHeaderName, this::detectTypeFromName));
         headerRow = Arrays.asList(headerArray);
         requiredColumns = Collections.EMPTY_LIST;
@@ -76,9 +77,10 @@ public class Spreadsheet {
         delimiters = new HashMap<>();
     }
 
-    public Spreadsheet(boolean convertHeaderNames, InputStream file, String... required) throws IOException {
+    public Spreadsheet(boolean convertHeaderNames,  boolean toLowerHeaderNames, InputStream file, String... required) throws IOException {
         delimiters = new HashMap<>();
         this.enableHeaderNameConversion = convertHeaderNames;
+        this.toLowerHeaderNames = toLowerHeaderNames;
         if (required == null || required.length == 0) {
             requiredColumns = Collections.EMPTY_LIST;
         } else {
@@ -87,17 +89,17 @@ public class Spreadsheet {
         parseInputFile(file);
     }
 
-    public Spreadsheet(boolean convertHeaderNames, RequestParameter file, String... required) throws IOException {
-        this(convertHeaderNames, file.getInputStream(), required);
+    public Spreadsheet(boolean convertHeaderNames,boolean toLowerHeaderNames, RequestParameter file, String... required) throws IOException {
+        this(convertHeaderNames, toLowerHeaderNames, file.getInputStream(), required);
         fileName = file.getFileName();
     }
 
     public Spreadsheet(InputStream file, String... required) throws IOException {
-        this(true, file, required);
+        this(true, true, file, required);
     }
 
     public Spreadsheet(RequestParameter file, String... required) throws IOException {
-        this(true, file, required);
+        this(true, true, file, required);
     }
 
     /**
@@ -228,7 +230,11 @@ public class Spreadsheet {
             if (str.contains("@")) {
                 str = StringUtils.substringBefore(str, "@");
             }
-            return String.valueOf(str).toLowerCase().replaceAll("[^0-9a-zA-Z:\\-]+", "_");
+            if (toLowerHeaderNames) {
+                return String.valueOf(str).toLowerCase().replaceAll("[^0-9a-zA-Z:\\-]+", "_");
+            } else {
+                return String.valueOf(str).replaceAll("[^0-9a-zA-Z:\\-]+", "_");
+            }
         } else {
             return String.valueOf(str);
         }

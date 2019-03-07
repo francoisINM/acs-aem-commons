@@ -99,7 +99,7 @@ public class UrlAssetImportTest {
         }).when(assetManager).createAsset(any(String.class), any(InputStream.class), any(String.class), any(Boolean.class));
 
         importProcess = new UrlAssetImport(context.getService(MimeTypeService.class), null);
-        importProcess.fileData = new Spreadsheet(true, "source", "target", "rendition", "original","dc:title", "dc:attr");
+        importProcess.fileData = new Spreadsheet(true, false, "source", "target", "rendition", "original","dc:title", "dc:attr");
 
         doAnswer(invocation -> {
             CheckedConsumer<ResourceResolver> method = (CheckedConsumer<ResourceResolver>) invocation.getArguments()[0];

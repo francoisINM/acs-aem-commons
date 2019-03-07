@@ -37,22 +37,22 @@ public class Spreadsheet extends com.adobe.acs.commons.data.Spreadsheet {
     /**
      * @deprecated Class was moved to com.adobe.acs.commons.data.Spreadsheet
      */
-    public Spreadsheet(boolean convertHeaderNames, String... headerArray) {
-        super(convertHeaderNames, headerArray);
+    public Spreadsheet(boolean convertHeaderNames,  String... headerArray) {
+        super(convertHeaderNames, true, headerArray);
     }
 
     /**
      * @deprecated Class was moved to com.adobe.acs.commons.data.Spreadsheet
      */
     public Spreadsheet(boolean convertHeaderNames, InputStream file, String... required) throws IOException {
-        super(convertHeaderNames, file, required);
+        super(convertHeaderNames, true, file, required);
     }
 
     /**
      * @deprecated Class was moved to com.adobe.acs.commons.data.Spreadsheet
      */
     public Spreadsheet(boolean convertHeaderNames, RequestParameter file, String... required) throws IOException {
-        super(convertHeaderNames, file, required);
+        super(convertHeaderNames, true, file, required);
     }
 
     /**

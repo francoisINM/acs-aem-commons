@@ -170,7 +170,7 @@ public class DataImporter extends ProcessDefinition {
     @Override
     public void buildProcess(ProcessInstance instance, ResourceResolver rr) throws LoginException, RepositoryException {
         try {
-            data = new Spreadsheet(enableHeaderNameConversion, importFile, PATH);
+            data = new Spreadsheet(enableHeaderNameConversion,true, importFile, PATH);
             if (presortData) {
                 Collections.sort(data.getDataRowsAsCompositeVariants(), (a, b) -> b.get(PATH).toString().compareTo(a.get(PATH).toString()));
             }
